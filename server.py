@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, Response
+from video_pose import VideoCamera
 import time
 import picamera
 
@@ -18,13 +19,16 @@ def add_header(response):
 
 @app.route("/")
 def show_video():
-    image = "img.jpg"
-    camera = picamera.PiCamera()
-    camera.resolution = (800, 600)
-    camera.capture("static/" + image)
-    time.sleep(1)
-    camera.close()
     return render_template("main.html")
 
+def gen(camera):
+    while True:
+        frame = camera.get_frame()
+        yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(VideoCamera()), mimetype='multipart/x-mixed-replace; boundary=frame')        
+        
 if __name__ == "__main__":
     app.run(host ='0.0.0.0', port =80, debug=True)
