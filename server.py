@@ -23,16 +23,34 @@ def show_video():
     return render_template("main.html")
 
 def gen(overlay_pose=False):
+    t = 0;
     interpreter = load_model()
     cam = cv2.VideoCapture(0)
     while True:
         ret_val, img = cam.read()
+        if t == 0:
+            overlay_pose = True
+        else :
+            overlay_pose = False
+
+        # overlay_pose = True이면 추론하고 점찍기
         if overlay_pose:
-            img = annotate_img(img, interpreter)
+            img, person, scale = annotate_img(img, interpreter)
+
+        for point in person.key_points:
+            if point.score < 0.5:  # 50보다 낮은 확률의 신체부위는 표시하지 않음
+                continue
+            x = int(point.position.x * scale[1])  # 신체부위라고 판별 되는 부위 좌표 체크
+            y = int(point.position.y * scale[0])
+            cv2.circle(img, (x, y), radius=5, color=(255, 0, 0), thickness=-1, lineType=8, shift=0)  # img에 점 찍기
 
         temp, jpeg = cv2.imencode('.jpg', img)
         img = jpeg.tobytes()
         yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + img + b'\r\n\r\n')
+
+        t = t + 1;
+        t = t % 100;
+
         if cv2.waitKey(1) == 27:
             break  # esc to quit
     cv2.destroyAllWindows()
