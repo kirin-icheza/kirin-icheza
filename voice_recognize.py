@@ -4,15 +4,15 @@ import threading
 
 def listen():
     
-    r = sr.Recognizer()
-    m = sr.Microphone()
+    r = sr.Recognizer() #Create a new Recognizer instance
+    m = sr.Microphone() #Create a new Microphone instance
     m.RATE = 44100
     m.CHUNK = 512
-    
+   
     print("A moment of silence, please...")
     with m as source:
         r.adjust_for_ambient_noise(source)
-        if(r.energy_threshold < 2000):
+        if(r.energy_threshold < 2000): #threshold - 최소 들을 수 있는 소리 크기, threshold보다 낮으면 인지 못함
             r.energy_threshold = 2000
         print("Set minimum energy threshold to {}".format(r.energy_threshold))
         print("Say something!")
