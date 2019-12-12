@@ -1,6 +1,7 @@
 import speech_recognition as sr
 import time
 import threading
+import re
 
 def listen():
     
@@ -29,5 +30,7 @@ def listen():
         except LookupError:
             print("sorry, I didn't catch that")
 
-while True:
-    listen()
+    while True:
+        listen()
+        
+
