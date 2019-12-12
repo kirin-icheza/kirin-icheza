@@ -28,12 +28,24 @@ def listen():
                 speechtext = speechtext['alternative'][0]['transcript'] #신뢰도가 가장 높은 말
                 speechtext = speechtext.replace(' ', '')
                 print("You said: " + speechtext)
-                if '불켜' in speechtext:
-                    light = 1
+                if re.match('\s*거실불켜\s*',speechtext):
+                    light = 5
                     print('말로 불을 켰음', light)
-                if '불꺼' in speechtext:
+                elif re.match('\s*거실불꺼\s*',speechtext):
+                    light = 4
+                    print('말로 불을 켰음', light)   
+                elif re.match('\s*화장실불켜\s*',speechtext):
+                    light = 3
+                    print('말로 불을 켰음', light)  
+                elif re.match('\s*화장실불꺼\s*',speechtext):
+                    light = 2
+                    print('말로 불을 켰음', light)   
+                elif re.match('\s*불켜\s*',speechtext):
+                    light = 1
+                    print('말로 불을 켰음', light)     
+                elif re.match('\s*불켜\s*',speechtext):
                     light = 0
-                    print('말로 불을 껐음', light)
+                    print('말로 불을 켰음', light)   
                     
         except LookupError:
             print("sorry, I didn't catch that")
