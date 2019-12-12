@@ -4,16 +4,16 @@ import threading
 import re
 
 def listen():
-    
-    r = sr.Recognizer() #Create a new Recognizer instance
-    m = sr.Microphone() #Create a new Microphone instance
+    global light
+    r = sr.Recognizer()
+    m = sr.Microphone()
     m.RATE = 44100
     m.CHUNK = 512
-   
+
     print("A moment of silence, please...")
     with m as source:
         r.adjust_for_ambient_noise(source)
-        if(r.energy_threshold < 2000): #threshold - 최소 들을 수 있는 소리 크기, threshold보다 낮으면 인지 못함
+        if (r.energy_threshold < 2000):
             r.energy_threshold = 2000
         print("Set minimum energy threshold to {}".format(r.energy_threshold))
         print("Say something!")
@@ -26,11 +26,21 @@ def listen():
                 pass
             else:
                 speechtext = speechtext['alternative'][0]['transcript'] #신뢰도가 가장 높은 말
+                speechtext = speechtext.replace(' ', '')
                 print("You said: " + speechtext)
+                if '불켜' in speechtext:
+                    light = 1
+                    print('말로 불을 켰음', light)
+                if '불꺼' in speechtext:
+                    light = 0
+                    print('말로 불을 껐음', light)
+                    
         except LookupError:
             print("sorry, I didn't catch that")
 
     while True:
         listen()
         
-
+def main():
+    while True:
+        listen()

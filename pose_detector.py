@@ -6,6 +6,9 @@ from person import BodyPart, KeyPoint, Position, Person
 def sigmoid(x):
     return 1/(1+np.exp(-x))
 
+def load_image(img='./static/img.png'):
+    return cv2.imread(img)
+
 # img data 표준화 -1 ~ 1
 def standardize_image(img):
     mean = 128.0
@@ -91,3 +94,27 @@ def load_model():
     interpreter = tf.lite.Interpreter(model_path='./posenet_mobilenet_v1_100_257x257_multi_kpt_stripped.tflite')
     interpreter.allocate_tensors()
     return interpreter
+
+def detect_sleep(person):
+    i = 0
+    flag_up = 0
+    flag_down = 0
+    upper_body = [0, 0]
+    lower_body = [0, 0]
+    for point in person.key_points:
+        i = i + 1
+        if point.score < 0.4:  # 50보다 낮은 확률의 신체부위는 무시
+            continue
+        if i >= 12 and point.score > flag_down: # 하반신인 경우
+            lower_body[0] = int(point.position.x)
+            lower_body[1] = int(point.position.y)
+            flag_down = point.score
+        elif i <= 7 and point.score > flag_up: # 상반신의 경우
+            upper_body[0]= int(point.position.x)
+            upper_body[1]= int(point.position.y)
+            flag_up = point.score
+    if (!flag_up and !flag_down) == 1:
+        return 1
+    if flag_up and flag_down and abs(upper_body[1] - lower_body[1]) / abs(upper_body[0] - lower_body[0]) < 1:
+        return 1
+    return 0
