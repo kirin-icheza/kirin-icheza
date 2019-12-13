@@ -28,10 +28,22 @@ def listen():
                 speechtext = speechtext['alternative'][0]['transcript'] #신뢰도가 가장 높은 말
                 speechtext = speechtext.replace(' ', '')
                 print("You said: " + speechtext)
-                if '불켜' in speechtext:
+                if '거실불켜' in speechtext:
+                    light = 5
+                    print('말로 거실 켜짐',light)
+                elif '거실불꺼' in speechtext:
+                    light = 4
+                    print('말로 거실 꺼짐',light)
+                elif '화장실불켜' in speechtext:
+                    light = 3
+                    print('말로 화장실 켜짐',light)
+                elif '화장실불꺼' in speechtext:
+                    light = 2 
+                    print('말로 화장실 꺼짐',light)
+                elif '불켜' in speechtext:
                     light = 1
                     print('말로 불을 켰음', light)
-                if '불꺼' in speechtext:
+                elif '불꺼' in speechtext:
                     light = 0
                     print('말로 불을 껐음', light)
                     

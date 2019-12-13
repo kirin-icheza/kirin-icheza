@@ -18,7 +18,7 @@ void ledControl(int pinNum, int value)
     memset(&ledctl, 0, sizeof(ledCtl));    
     int size = sizeof(ledctl);    
         
-    printf( "device file open\n");     
+//    printf( "device file open\n");     
     dev = open( DEVICE_FILENAME, O_RDWR|O_NDELAY );    
         
     if( dev >= 0 )
@@ -36,19 +36,19 @@ void ledControl(int pinNum, int value)
         ret = read(dev, buf2, 100 );    
         printf( "%s %dbytes\n", buf2, ret );    
         */
-        printf( "ioctl function call\n");
+//        printf( "ioctl function call\n");
         
         ret = ioctl(dev, MY_IOCSQSET, &ledctl );    
-        printf( "ret = %d\n", ret );    
+//        printf( "ret = %d\n", ret );    
 
         ret = ioctl(dev, MY_IOCSQ_GPIO_SETFUNC);    
-        printf( "ret = %d\n", ret );    
+//        printf( "ret = %d\n", ret );    
 
         ret = ioctl(dev, MY_IOCSQ_GPIO_ACTIVE);    
-        printf( "ret = %d\n", ret );    
+//        printf( "ret = %d\n", ret );    
        
-        printf( "device file close\n");    
+//        printf( "device file close\n");    
         ret = close(dev);    
-        printf( "ret = %d\n", ret );    
+//        printf( "ret = %d\n", ret );    
     }    
 }
